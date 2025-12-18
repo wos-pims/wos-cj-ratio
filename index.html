@@ -22,7 +22,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-7">
                 <div class="card shadow-lg">
-                    <div class="card-header bg-dark text-white">
+                    <div class="card-header bg-info text-dark">
                         <h5 class="mb-0">Troop Deployment Capacity Check</h5>
                     </div>
                     <div class="card-body">
@@ -54,9 +54,13 @@
                                     <input type="number" class="form-control" id="marksman" required min="0">
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary w-100 mt-3" id="calculateBtn">
-                                Check Deployment
-                            </button>
+                            <div class="row justify-content-center mt-3">
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-warning w-100" id="calculateBtn">
+                                        Check Deployment
+                                    </button>
+                                </div>
+                            </div>
                         </form>
 
                         <div class="mt-4" id="messageArea">
@@ -112,8 +116,9 @@
                 excess_infantry = infantry - max_capacity; 
                 const errorMsg = `
                     <div class="alert alert-danger" role="alert">
-                        <strong>ERROR:</strong> You cannot get all your **Infantry** out, you have ${excess_infantry} too much infantry. 
-                        Consider using a capacity bonus (pets or boost) or injuring some.
+                        <strong>ERROR:</strong> You cannot get all your Infantry out, you have ${excess_infantry} too much infantry. 
+                        <br>Consider using a capacity bonus (pets or boost) or injuring some.
+                        <br>Your only solution is to send full marches of infantry
                     </div>
                 `;
                 messageArea.innerHTML += errorMsg;
@@ -152,10 +157,10 @@
                 
                 const resultMsg = `
                     <div class="alert alert-primary mt-3">
-                        **Calculated Result (per queue):**
-                        <br/>Infantry: ${infantry_per_queue.toLocaleString()}
-                        <br/>Lancer: ${lancer_per_queue.toLocaleString()} ${leftover_lancer_msg}
-                        <br/>Marksman: ${marksman_per_queue.toLocaleString()} ${leftover_marksman_msg}
+                        <u>Calculated Result (per queue):</u>
+                        <br/>Infantry: <bold> ${infantry_per_queue.toLocaleString()} </bold>
+                        <br/>Lancer: <bold> ${lancer_per_queue.toLocaleString()} </bold> ${leftover_lancer_msg}
+                        <br/>Marksman: <bold> ${marksman_per_queue.toLocaleString()} </bold> ${leftover_marksman_msg}
                     </div>
                 `;
                 messageArea.innerHTML += resultMsg;
