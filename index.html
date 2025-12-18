@@ -24,29 +24,28 @@
                         <form id="troopForm">
                             <div class="row">
                                 <div class="col-6 mb-3">
-                                    <label for="totalTroops" class="form-label">1. Total Troops</label>
-                                    <input type="number" class="form-control" id="totalTroops" required min="0">
+                                    <label for="queues" class="form-label">Number of march queues</label>
+                                    <input type="number" class="form-control" id="queues" required min="1">
                                 </div>
                                 <div class="col-6 mb-3">
-                                    <label for="queues" class="form-label">2. Number of march queues</label>
-                                    <input type="number" class="form-control" id="queues" required min="1">
+                                    <label for="capacity" class="form-label">Capacity per Queue</label>
+                                    <input type="number" class="form-control" id="capacity" required min="10000">
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6 mb-3">
-                                    <label for="capacity" class="form-label">3. Capacity per Queue</label>
-                                    <input type="number" class="form-control" id="capacity" required min="10000">
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <label for="infantry" class="form-label">4. Infantry Count</label>
+                                <div class="col-6 mb-2">
+                                    <label for="infantry" class="form-label">Infantry Count</label>
                                     <input type="number" class="form-control" id="infantry" required min="0">
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="otherTroops" class="form-label">5. Lancer/Marksman Count (Used for Total Check)</label>
-                                <input type="number" class="form-control" id="otherTroops" required min="0">
+                            <div class="mb-2">
+                                <label for="otherTroops" class="form-label">Lancer Count</label>
+                                <input type="number" class="form-control" id="lancer" required min="0">
                             </div>
-
+                            <div class="mb-2">
+                                <label for="otherTroops" class="form-label">Marksman Count</label>
+                                <input type="number" class="form-control" id="marksman" required min="0">
+                            </div>
                             <button type="button" class="btn btn-primary w-100 mt-2" id="calculateBtn">
                                 Check Deployment
                             </button>
@@ -69,25 +68,24 @@
             messageArea.innerHTML = '';
 
             // 1. Get and parse the input values (using + for quick conversion to number)
-            const total_troops = +document.getElementById('totalTroops').value;
             const queues = +document.getElementById('queues').value;
             const capacity = +document.getElementById('capacity').value;
             const infantry = +document.getElementById('infantry').value;
-            // const other_troops = +document.getElementById('otherTroops').value; // Included for completeness but not strictly needed for the logic below
+            const lancer = +document.getElementById('lancer').value;
+            const marksman = +document.getElementById('marksman').value;
 
             // Basic Input Validation
-            if (isNaN(total_troops) || isNaN(queues) || isNaN(capacity) || isNaN(infantry) || queues <= 0 || capacity <= 0) {
+            if (isNaN(queues) || isNaN(capacity) || isNaN(infantry) || isNaN(lancer) || isNaN(marksman) || queues <= 0 || capacity <= 0) {
                 messageArea.innerHTML = '<div class="alert alert-warning">Please ensure all fields have valid positive numbers for Queues and Capacity.</div>';
                 return;
             }
 
             // Calculate the maximum capacity available
             const max_capacity = queues * capacity;
+            const total_troops = infantry + lancer + marksman;
             let infantry_per_queue = 0;
 
-            // --- STEP 1: Check Total Troops vs. Max Capacity ---
             if (total_troops > max_capacity) {
-                // Add the Bootstrap info message
                 const infoMsg = `
                     <div class="alert alert-info" role="alert">
                         <strong>Explication:</strong> You cannot get all your troops out.
@@ -97,7 +95,6 @@
                 messageArea.innerHTML += infoMsg;
             }
 
-            // --- STEP 2: Check Infantry vs. Max Capacity (Required regardless of the Step 1 outcome) ---
             if (infantry > max_capacity) {
                 // Add the Bootstrap error message
                 const errorMsg = `
@@ -107,33 +104,16 @@
                     </div>
                 `;
                 messageArea.innerHTML += errorMsg;
-
-                // Set a placeholder for the final calculation result
-                messageArea.innerHTML += `
-                    <div class="alert alert-secondary mt-3">
-                        **Infantry per queue calculation skipped due to deployment error.**
-                    </div>
-                `;
-            } else {
-                // --- STEP 3: If Infantry can be deployed, calculate distribution ---
-                infantry_per_queue = Math.floor(infantry / queues); // Use Math.floor to ensure integer result
-                
-                // Add the success/result message
-                const successMsg = `
-                    <div class="alert alert-success" role="alert">
-                        Deployment successful!
-                    </div>
-                `;
-                messageArea.innerHTML += successMsg;
-
-                // Add the final calculation result
-                const resultMsg = `
-                    <div class="alert alert-primary mt-3">
-                        **Calculated Result:** Infantry per Queue = ${infantry_per_queue} (Total Infantry: ${infantry}, Queues: ${queues})
-                    </div>
-                `;
-                messageArea.innerHTML += resultMsg;
             }
+
+            infantry_per_queue = Math.floor(infantry / queues);
+            const resultMsg = `
+                <div class="alert alert-primary mt-3">
+                    **Calculated Result:** Infantry per Queue = ${infantry_per_queue} (Total Infantry: ${infantry}, Queues: ${queues})
+                </div>
+            `;
+            messageArea.innerHTML += resultMsg;
+            
         });
     </script>
 </body>
