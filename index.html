@@ -1,21 +1,26 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WOS CJ Troop Deployment Calculator</title>
+    <title>WOS CJ Troop Deployment Calculator - by Pims</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         .container {
             padding-top: 50px;
         }
+
+        .form-label-compact {
+            font-size: 0.85rem; 
+            margin-bottom: 0.2rem;
+            display: block;
+        }
     </style>
 </head>
 <body>
-
-    <div class="container">
+<div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+            <div class="col-md-8 col-lg-7">
                 <div class="card shadow-lg">
                     <div class="card-header bg-dark text-white">
                         <h5 class="mb-0">Troop Deployment Capacity Check</h5>
@@ -24,7 +29,7 @@
                         <form id="troopForm">
                             <div class="row">
                                 <div class="col-6 mb-3">
-                                    <label for="queues" class="form-label">Number of march queues</label>
+                                    <label for="queues" class="form-label">Number of March Queues</label>
                                     <input type="number" class="form-control" id="queues" required min="1">
                                 </div>
                                 <div class="col-6 mb-3">
@@ -32,21 +37,24 @@
                                     <input type="number" class="form-control" id="capacity" required min="10000">
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-6 mb-2">
-                                    <label for="infantry" class="form-label">Infantry Count</label>
+
+                            <hr>
+                            
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label for="infantry" class="form-label-compact">Infantry Count</label>
                                     <input type="number" class="form-control" id="infantry" required min="0">
                                 </div>
+                                <div class="col-4">
+                                    <label for="lancer" class="form-label-compact">Lancer Count</label>
+                                    <input type="number" class="form-control" id="lancer" required min="0">
+                                </div>
+                                <div class="col-4">
+                                    <label for="marksman" class="form-label-compact">Marksman Count</label>
+                                    <input type="number" class="form-control" id="marksman" required min="0">
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <label for="otherTroops" class="form-label">Lancer Count</label>
-                                <input type="number" class="form-control" id="lancer" required min="0">
-                            </div>
-                            <div class="mb-2">
-                                <label for="otherTroops" class="form-label">Marksman Count</label>
-                                <input type="number" class="form-control" id="marksman" required min="0">
-                            </div>
-                            <button type="button" class="btn btn-primary w-100 mt-2" id="calculateBtn">
+                            <button type="button" class="btn btn-primary w-100 mt-3" id="calculateBtn">
                                 Check Deployment
                             </button>
                         </form>
@@ -59,15 +67,15 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <script>
+   <script>
         document.getElementById('calculateBtn').addEventListener('click', function() {
             const messageArea = document.getElementById('messageArea');
             // Clear previous messages and results
             messageArea.innerHTML = '';
 
-            // 1. Get and parse the input values (using + for quick conversion to number)
+            // 1. Get and parse the input values
             const queues = +document.getElementById('queues').value;
             const capacity = +document.getElementById('capacity').value;
             const infantry = +document.getElementById('infantry').value;
@@ -84,6 +92,11 @@
             const max_capacity = queues * capacity;
             const total_troops = infantry + lancer + marksman;
             let infantry_per_queue = 0;
+            let excess_infantry = 0;
+            let lancer_per_queue = 0;
+            let marksman_per_queue = 0;
+            let leftover_lancer_msg = '';
+            let leftover_marksman_msg = '';
 
             if (total_troops > max_capacity) {
                 const infoMsg = `
@@ -99,39 +112,50 @@
                 excess_infantry = infantry - max_capacity; 
                 const errorMsg = `
                     <div class="alert alert-danger" role="alert">
-                        <strong>ERROR:</strong> You cannot get all your **Infantry** out, you have ${excess_infantry} too much infantry 
+                        <strong>ERROR:</strong> You cannot get all your **Infantry** out, you have ${excess_infantry} too much infantry. 
                         Consider using a capacity bonus (pets or boost) or injuring some.
                     </div>
                 `;
                 messageArea.innerHTML += errorMsg;
+             
+                // If infantry fails, we won't send any other troops anyway
+                
             } else {
-                leftover_lancer_msg  = '';
-                leftover_marksman_msg = '';
-                
                 infantry_per_queue = Math.floor(infantry / queues);
+                const lancer_capacity = max_capacity - infantry;
                 
-                lancer_capacity = max_capacity - infantry;
-                lancer_per_queue = Math.floor(lancer_capacity / queues);
-                if (lancer > lancer_capacity) {
-                    leftover_lancer = lancer - lancer_capacity;
-                    leftover_lancer_msg = '(' + leftover_lancer + ' lancers will stay home)';
+                if (lancer > lancer_capacity) { // Cannot fit all Lancers
+                    const leftover_lancer = lancer - lancer_capacity;
+                    
+                    lancer_per_queue = Math.floor(lancer_capacity / queues); 
+                    
+                    leftover_lancer_msg = `(${leftover_lancer.toLocaleString()} lancers will stay home)`;
                     marksman_per_queue = 0;
-                    leftover_marksman_msg = '(All marksman will stay home)';
-                } else {
-                    marksman_capacity = lancer_capacity - lancer;
-                    marksman_per_queue = Math.floor(marksman_capacity / queues);
-                    if (marksman > marksman_capacity) {
-                        leftover_marksman = marksman - marksman_capacity;
-                        leftover_marksman_msg = '(' + leftover_marksman + ' marksman will stay home)';
+                    leftover_marksman_msg = '(All marksmen will stay home)';
+                
+                } else { // All Lancers fit
+                    lancer_per_queue = Math.floor(lancer / queues);
+                    
+                    const marksman_capacity = max_capacity - infantry - lancer;
+                    
+                    if (marksman > marksman_capacity) { // Cannot fit all Marksmen
+                        const leftover_marksman = marksman - marksman_capacity;
+                        
+                        marksman_per_queue = Math.floor(marksman_capacity / queues);
+                        leftover_marksman_msg = `(${leftover_marksman.toLocaleString()} marksmen will stay home)`;
+                    
+                    } else {
+                        // All Marksmen fit
+                        marksman_per_queue = Math.floor(marksman / queues);
                     }
                 }
                 
                 const resultMsg = `
                     <div class="alert alert-primary mt-3">
-                        **Calculated Result:** 
-                        <br/>Infantry per Queue = ${infantry_per_queue}
-                        <br/>Lancer per Queue = ${lancer_per_queue} ${leftover_lancer_msg} 
-                        <br/>Marksman per Queue = ${marksman_per_queue} ${leftover_marksman_msg} 
+                        **Calculated Result (per queue):**
+                        <br/>Infantry: ${infantry_per_queue.toLocaleString()}
+                        <br/>Lancer: ${lancer_per_queue.toLocaleString()} ${leftover_lancer_msg}
+                        <br/>Marksman: ${marksman_per_queue.toLocaleString()} ${leftover_marksman_msg}
                     </div>
                 `;
                 messageArea.innerHTML += resultMsg;
