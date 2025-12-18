@@ -105,14 +105,14 @@
             if (total_troops > max_capacity) {
                 const infoMsg = `
                     <div class="alert alert-info" role="alert">
-                        <strong>Explication:</strong> You cannot get all your troops out.
+                        <strong>INFO:</strong> You cannot get all your troops out.
                         We are prioritizing **Infantry**, then Lancer, then Marksman.
                     </div>
                 `;
                 messageArea.innerHTML += infoMsg;
             }
 
-            if (infantry > max_capacity) {
+            if (infantry >= max_capacity) {
                 excess_infantry = infantry - max_capacity; 
                 const errorMsg = `
                     <div class="alert alert-danger" role="alert">
@@ -129,7 +129,7 @@
                 infantry_per_queue = Math.floor(infantry / queues);
                 const lancer_capacity = max_capacity - infantry;
                 
-                if (lancer > lancer_capacity) { // Cannot fit all Lancers
+                if (lancer >= lancer_capacity) { // Cannot fit all Lancers
                     const leftover_lancer = lancer - lancer_capacity;
                     
                     lancer_per_queue = Math.floor(lancer_capacity / queues); 
