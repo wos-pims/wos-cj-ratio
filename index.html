@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -96,24 +96,46 @@
             }
 
             if (infantry > max_capacity) {
-                // Add the Bootstrap error message
+                excess_infantry = infantry - max_capacity; 
                 const errorMsg = `
                     <div class="alert alert-danger" role="alert">
-                        <strong>ERROR:</strong> You cannot get all your **Infantry** out. 
+                        <strong>ERROR:</strong> You cannot get all your **Infantry** out, you have ${excess_infantry} too much infantry 
                         Consider using a capacity bonus (pets or boost) or injuring some.
                     </div>
                 `;
                 messageArea.innerHTML += errorMsg;
+            } else {
+                leftover_lancer_msg  = '';
+                leftover_marksman_msg = '';
+                
+                infantry_per_queue = Math.floor(infantry / queues);
+                
+                lancer_capacity = max_capacity - infantry;
+                lancer_per_queue = Math.floor(lancer_capacity / queues);
+                if (lancer > lancer_capacity) {
+                    leftover_lancer = lancer - lancer_capacity;
+                    leftover_lancer_msg = '(' + $leftover_lancer + ' lancers will stay home)';
+                    marksman_per_queue = 0;
+                    leftover_marksman_msg = '(All marksman will stay home)';
+                } else {
+                    marksman_capacity = lancer_capacity - lancer;
+                    marksman_per_queue = Math.floor(marksman_capacity / queues);
+                    if (marksman > marksman_capacity) {
+                        leftover_marksman = marksman - marksman_capacity;
+                        leftover_marksman_msg = '(' + $leftover_marksman + ' marksman will stay home)';
+                    }
+                }
+                
+                const resultMsg = `
+                    <div class="alert alert-primary mt-3">
+                        **Calculated Result:** 
+                        <br/>Infantry per Queue = ${infantry_per_queue}
+                        <br/>Lancer per Queue = ${lancer_per_queue} ${leftover_lancer_msg} 
+                        <br/>Marksman per Queue = ${marksman_per_queue} ${leftover_marksman_msg} 
+                    </div>
+                `;
+                messageArea.innerHTML += resultMsg;
             }
-
-            infantry_per_queue = Math.floor(infantry / queues);
-            const resultMsg = `
-                <div class="alert alert-primary mt-3">
-                    **Calculated Result:** Infantry per Queue = ${infantry_per_queue} (Total Infantry: ${infantry}, Queues: ${queues})
-                </div>
-            `;
-            messageArea.innerHTML += resultMsg;
-            
         });
     </script>
 </body>
