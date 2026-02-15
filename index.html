@@ -17,16 +17,22 @@
         .dark-mode .card-header { background-color: #087990 !important; color: white !important; }
         .dark-mode .form-control { background-color: #2b2b2b; border-color: #444; color: white; }
         .dark-mode .form-control:focus { background-color: #333; color: white; border-color: #0dcaf0; }
-        .dark-mode hr { border-top: 1px solid #444; }
-        .dark-mode .alert-info { background-color: #032830; border-color: #087990; color: #6edff6; }
-        .dark-mode .alert-primary { background-color: #051b2b; border-color: #084298; color: #6ea8fe; }
+        
         body { background-color: var(--bg-color); color: var(--text-color); transition: all 0.3s ease; }
         .container { padding-top: 50px; }
-        .form-label-compact { font-size: 0.85rem; margin-bottom: 0.2rem; display: block; }
-        .lang-select { width: auto; display: inline-block; padding: 2px 5px; font-size: 0.8rem; }
+        
+        /* Language Select Styling */
+        .lang-container { display: flex; align-items: center; gap: 8px; }
+        .lang-select { 
+            width: 110px !important; /* Larger width for flags/text */
+            padding: 4px 8px; 
+            font-size: 0.9rem; 
+            cursor: pointer;
+        }
+        
         .hidden { display: none; }
         .bold-text { font-weight: bold; }
-        .theme-toggle { cursor: pointer; font-size: 1.2rem; margin-right: 15px; }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; margin-right: 12px; }
     </style>
 </head>
 <body>
@@ -36,17 +42,17 @@
             <div class="card shadow-lg">
                 <div class="card-header bg-info text-dark d-flex justify-content-between align-items-center">
                     <h5 class="mb-0" data-i18n="card_header">...</h5>
-                    <div class="d-flex align-items-center">
+                    <div class="lang-container">
                         <span class="theme-toggle" onclick="toggleDarkMode()" id="themeIcon">🌙</span>
                         <select class="form-select lang-select" id="langSelect" onchange="changeLanguage(this.value)">
-                            <option value="en">EN</option>
-                            <option value="fr">FR</option>
-                            <option value="it">IT</option>
-                            <option value="es">ES</option>
-                            <option value="pl">PL</option>
-                            <option value="tr">TR</option>
-                            <option value="ja">JA</option>
-                            <option value="zh">ZH</option>
+                            <option value="en">🇺🇸 EN</option>
+                            <option value="fr">🇫🇷 FR</option>
+                            <option value="it">🇮🇹 IT</option>
+                            <option value="es">🇪🇸 ES</option>
+                            <option value="pl">🇵🇱 PL</option>
+                            <option value="tr">🇹🇷 TR</option>
+                            <option value="ja">🇯🇵 JA</option>
+                            <option value="zh">🇨🇳 ZH</option>
                         </select>
                     </div>
                 </div>
@@ -88,7 +94,7 @@
                     <div class="mt-4" id="messageArea"></div>
                     <div id="copyArea" class="text-center mt-3 hidden">
                         <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard()" id="copyBtn" data-i18n="btn_copy">
-                            Copy Results
+                            ...
                         </button>
                     </div>
                 </div>
@@ -111,17 +117,17 @@
         });
 
     function updateContent() {
-        // Update all data-i18n elements
         document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            el.innerHTML = i18next.t(key);
+            el.innerHTML = i18next.t(el.getAttribute('data-i18n'));
         });
-        
-        // Force update the tab title
         document.title = i18next.t('app_title');
-        
-        // Match dropdown to current language
         document.getElementById('langSelect').value = i18next.language.split('-')[0];
+        
+        // RE-RUN CALCULATION ON LANGUAGE CHANGE
+        // This ensures the result box updates its text immediately
+        if (currentResultText !== "") {
+            calculateDeployment();
+        }
     }
 
     function changeLanguage(lng) {
@@ -132,13 +138,8 @@
         const body = document.body;
         const icon = document.getElementById('themeIcon');
         body.classList.toggle('dark-mode');
-        if (body.classList.contains('dark-mode')) {
-            icon.innerText = "☀️";
-            localStorage.setItem('theme', 'dark');
-        } else {
-            icon.innerText = "🌙";
-            localStorage.setItem('theme', 'light');
-        }
+        icon.innerText = body.classList.contains('dark-mode') ? "☀️" : "🌙";
+        localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
     }
 
     if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -146,17 +147,19 @@
         document.getElementById('themeIcon').innerText = "☀️";
     }
 
-    document.getElementById('calculateBtn').addEventListener('click', function() {
+    // Wrap your logic in a function we can call anytime
+    function calculateDeployment() {
         const messageArea = document.getElementById('messageArea');
         const copyArea = document.getElementById('copyArea');
         messageArea.innerHTML = '';
-        copyArea.classList.add('hidden');
 
         const queues = +document.getElementById('queues').value;
         const capacity = +document.getElementById('capacity').value;
         const infantry = +document.getElementById('infantry').value;
         const lancer = +document.getElementById('lancer').value;
         const marksman = +document.getElementById('marksman').value;
+
+        if (!queues || !capacity) return; // Don't calculate if empty
 
         if (isNaN(queues) || isNaN(capacity) || isNaN(infantry) || isNaN(lancer) || isNaN(marksman) || queues <= 0 || capacity <= 0) {
             messageArea.innerHTML = `<div class="alert alert-warning">${i18next.t('error_invalid')}</div>`;
@@ -211,7 +214,9 @@
             
             copyArea.classList.remove('hidden');
         }
-    });
+    }
+
+    document.getElementById('calculateBtn').addEventListener('click', calculateDeployment);
 
     function copyToClipboard() {
         navigator.clipboard.writeText(currentResultText).then(() => {
