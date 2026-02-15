@@ -1,0 +1,19 @@
+{
+  "app_title": "WOS CJ Troop Deployment Calculator - by Pims",
+  "card_header": "Troop Deployment Capacity Check",
+  "label_queues": "Number of March Queues",
+  "label_capacity": "Capacity per Queue",
+  "label_infantry": "Infantry",
+  "label_lancer": "Lancer",
+  "label_marksman": "Marksman",
+  "btn_check": "Check Deployment",
+  "info_title": "INFO",
+  "info_text": "You cannot get all your troops out. We are prioritizing Infantry, then Lancer, then Marksman.",
+  "error_title": "ERROR",
+  "error_infantry_too_much": "You cannot get all your Infantry out, you have {{count}} too much infantry. Consider using a capacity bonus or injuring some with the help of a friend. Else, just send full marches of infantry",
+  "error_invalid": "Please ensure all fields have valid positive numbers for Queues and Capacity.",
+  "result_title": "Calculated Result (per queue)",
+  "stay_home_lancer": "{{count}} lancers will stay home",
+  "stay_home_marksman": "{{count}} marksmen will stay home",
+  "stay_home_all_marksman": "All marksmen will stay home"
+}
