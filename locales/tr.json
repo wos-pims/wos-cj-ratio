@@ -1,0 +1,19 @@
+{
+  "app_title": "WOS CJ Birlik Konuşlandırma Hesaplayıcı - Pims tarafından",
+  "card_header": "Birlik Kapasite Kontrolü",
+  "label_queues": "Yürüyüş Kuyruğu Sayısı",
+  "label_capacity": "Kuyruk Başına Kapasite",
+  "label_infantry": "Piyade",
+  "label_lancer": "Mızrakçı",
+  "label_marksman": "Keskin Nişancı",
+  "btn_check": "Konuşlandırmayı Kontrol Et",
+  "info_title": "BİLGİ",
+  "info_text": "Tüm birliklerinizi çıkaramazsınız. Önce Piyade, sonra Mızrakçı, sonra Keskin Nişancıya öncelik veriyoruz.",
+  "error_title": "HATA",
+  "error_infantry_too_much": "Tüm piyadelerinizi çıkaramazsınız, {{count}} fazla piyadeniz var. Kapasite bonusu kullanmayı veya bir arkadaşınızın yardımıyla bazılarını yaralamayı düşünün. Aksi takdirde, sadece piyade yürüyüşleri gönderin.",
+  "error_invalid": "Lütfen Kuyruklar ve Kapasite için tüm alanların geçerli pozitif sayılar olduğundan emin olun.",
+  "result_title": "Hesaplanan Sonuç (kuyruk başına)",
+  "stay_home_lancer": "{{count}} mızrakçı evde kalacak",
+  "stay_home_marksman": "{{count}} keskin nişancı evde kalacak",
+  "stay_home_all_marksman": "Tüm keskin nişancılar evde kalacak"
+}
