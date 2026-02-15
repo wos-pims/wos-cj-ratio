@@ -1,5 +1,5 @@
 {
-  "app_title": "WOS CJ Troop Deployment Calculator - by Pims",
+  "app_title": "WOS CJ Troop Deployment Calculator - by Pims 🍟",
   "card_header": "Troop Deployment Capacity Check",
   "label_queues": "Number of March Queues",
   "label_capacity": "Capacity per Queue",
@@ -7,6 +7,7 @@
   "label_lancer": "Lancer",
   "label_marksman": "Marksman",
   "btn_check": "Check Deployment",
+  "btn_copy": "Copy Results",
   "info_title": "INFO",
   "info_text": "You cannot get all your troops out. We are prioritizing Infantry, then Lancer, then Marksman.",
   "error_title": "ERROR",
