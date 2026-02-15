@@ -1,0 +1,19 @@
+{
+  "app_title": "WOS CJ 部队出征计算器 - 由 Pims 开发",
+  "card_header": "出征容量检查",
+  "label_queues": "出征队列数量",
+  "label_capacity": "单队容量",
+  "label_infantry": "步兵",
+  "label_lancer": "矛兵",
+  "label_marksman": "射手",
+  "btn_check": "检查出征方案",
+  "info_title": "提示",
+  "info_text": "您无法派出所有部队。我们将优先考虑步兵，其次是矛兵，最后是射手。",
+  "error_title": "错误",
+  "error_infantry_too_much": "您无法派出所有步兵，步兵超出了 {{count}}。请考虑使用容量加成，或在朋友的帮助下让部分步兵受伤。否则，只能派全步兵队列。",
+  "error_invalid": "请确保队列数量和容量均为有效的正数。",
+  "result_title": "计算结果（每队）",
+  "stay_home_lancer": "{{count}} 矛兵将留守",
+  "stay_home_marksman": "{{count}} 射手将留守",
+  "stay_home_all_marksman": "所有射手将留守"
+}
