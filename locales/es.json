@@ -1,5 +1,5 @@
 {
-  "app_title": "Calculadora de Despliegue de Tropas WOS CJ - por Pims",
+  "app_title": "Calculadora de Despliegue de Tropas WOS CJ - por Pims 🍟",
   "card_header": "Control de Capacidad de Despliegue",
   "label_queues": "Número de colas de marcha",
   "label_capacity": "Capacidad por cola",
@@ -7,13 +7,14 @@
   "label_lancer": "Lancero",
   "label_marksman": "Tirador",
   "btn_check": "Comprobar Despliegue",
+  "btn_copy": "Copiar Resultados",
   "info_title": "INFO",
-  "info_text": "No puedes sacar todas tus tropas. Priorizamos Infantería, luego Lanceros y luego Tiradores.",
+  "info_text": "No caben todos. Prioridad: Infantería > Lanceros > Tiradores.",
   "error_title": "ERROR",
-  "error_infantry_too_much": "No puedes sacar toda tu infantería, te sobran {{count}}. Usa un bono de capacidad o hiere a algunos con ayuda de un amigo. Si no, envía marchas completas de infantería.",
-  "error_invalid": "Asegúrate de que todos los campos tengan números positivos válidos para Colas y Capacidad.",
-  "result_title": "Resultado calculado (por cola)",
-  "stay_home_lancer": "{{count}} lanceros se quedarán en casa",
-  "stay_home_marksman": "{{count}} tiradores se quedarán en casa",
-  "stay_home_all_marksman": "Todos los tiradores se quedarán en casa"
+  "error_infantry_too_much": "Sobran {{count}} de infantería. Usa bonos o hiere a algunos. Si no, envía marchas solo de infantería.",
+  "error_invalid": "Usa números positivos válidos para marchas y capacidad.",
+  "result_title": "Resultado (por marcha)",
+  "stay_home_lancer": "{{count}} lanceros se quedan",
+  "stay_home_marksman": "{{count}} tiradores se quedan",
+  "stay_home_all_marksman": "Todos los tiradores se quedan"
 }
