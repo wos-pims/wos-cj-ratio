@@ -1,0 +1,19 @@
+{
+  "app_title": "Calculateur de déploiement de troupes WOS CJ - par Pims",
+  "card_header": "Vérification de la capacité de déploiement",
+  "label_queues": "Nombre de files de marche",
+  "label_capacity": "Capacité par file",
+  "label_infantry": "Infanterie",
+  "label_lancer": "Lancier",
+  "label_marksman": "Tireur d'élite",
+  "btn_check": "Vérifier le déploiement",
+  "info_title": "INFO",
+  "info_text": "Vous ne pouvez pas sortir toutes vos troupes. Nous donnons la priorité à l'infanterie, puis aux lanciers, puis aux tireurs d'élite.",
+  "error_title": "ERREUR",
+  "error_infantry_too_much": "Vous ne pouvez pas sortir toute votre infanterie, vous avez {{count}} soldats en trop. Envisagez un bonus de capacité ou blessez-en avec l'aide d'un ami. Sinon, envoyez simplement des marches complètes d'infanterie.",
+  "error_invalid": "Veuillez vous assurer que tous les champs contiennent des nombres positifs valides pour les files et la capacité.",
+  "result_title": "Résultat calculé (par file)",
+  "stay_home_lancer": "{{count}} lanciers resteront à la maison",
+  "stay_home_marksman": "{{count}} tireurs resteront à la maison",
+  "stay_home_all_marksman": "Tous les tireurs resteront à la maison"
+}
