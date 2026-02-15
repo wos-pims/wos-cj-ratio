@@ -1,0 +1,19 @@
+{
+  "app_title": "WOS CJ 部隊派遣シミュレーター - by Pims",
+  "card_header": "部隊派遣容量チェック",
+  "label_queues": "進軍列数",
+  "label_capacity": "1列あたりの容量",
+  "label_infantry": "盾兵",
+  "label_lancer": "槍兵",
+  "label_marksman": "弓兵",
+  "btn_check": "配置を確認する",
+  "info_title": "情報",
+  "info_text": "すべての部隊を出すことはできません。盾兵、槍兵、弓兵の順に優先されます。",
+  "error_title": "エラー",
+  "error_infantry_too_much": "盾兵が多すぎるため、すべてを出すことができません（{{count}}体超過）。容量ボーナスを使用するか、友人の協力を得て一部を負傷させてください。さもなければ、盾兵のみのフル進軍を行ってください。",
+  "error_invalid": "進軍列数と容量には有効な正の数値を入力してください。",
+  "result_title": "計算結果（1列あたり）",
+  "stay_home_lancer": "{{count}}体の槍兵が待機となります",
+  "stay_home_marksman": "{{count}}体の弓兵が待機となります",
+  "stay_home_all_marksman": "すべての弓兵が待機となります"
+}
