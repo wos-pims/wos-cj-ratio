@@ -21,10 +21,9 @@
         body { background-color: var(--bg-color); color: var(--text-color); transition: all 0.3s ease; }
         .container { padding-top: 50px; }
         
-        /* Language Select Styling */
         .lang-container { display: flex; align-items: center; gap: 8px; }
         .lang-select { 
-            width: 110px !important; /* Larger width for flags/text */
+            width: 120px !important; 
             padding: 4px 8px; 
             font-size: 0.9rem; 
             cursor: pointer;
@@ -45,14 +44,14 @@
                     <div class="lang-container">
                         <span class="theme-toggle" onclick="toggleDarkMode()" id="themeIcon">🌙</span>
                         <select class="form-select lang-select" id="langSelect" onchange="changeLanguage(this.value)">
-                            <option value="en">🇺🇸 EN</option>
-                            <option value="fr">🇫🇷 FR</option>
-                            <option value="it">🇮🇹 IT</option>
-                            <option value="es">🇪🇸 ES</option>
-                            <option value="pl">🇵🇱 PL</option>
-                            <option value="tr">🇹🇷 TR</option>
-                            <option value="ja">🇯🇵 JA</option>
-                            <option value="zh">🇨🇳 ZH</option>
+                            <option value="en">🇺🇸 English</option>
+                            <option value="es">🇪🇸 Español</option>
+                            <option value="fr">🇫🇷 Français</option>
+                            <option value="it">🇮🇹 Italiano</option>
+                            <option value="pl">🇵🇱 Polski</option>
+                            <option value="tr">🇹🇷 Türkçe</option>
+                            <option value="ja">🇯🇵 日本語</option>
+                            <option value="zh">🇨🇳 中文</option>
                         </select>
                     </div>
                 </div>
@@ -113,20 +112,20 @@
             fallbackLng: 'en',
             backend: { loadPath: './locales/{{lng}}.json' }
         }, function(err, t) {
+            loadSavedTroops(); // Load data after translation is ready
             updateContent();
         });
 
     function updateContent() {
         document.querySelectorAll('[data-i18n]').forEach(el => {
+            if (el.tagName === 'OPTION') return; // Skip select options to keep flags
             el.innerHTML = i18next.t(el.getAttribute('data-i18n'));
         });
         document.title = i18next.t('app_title');
         document.getElementById('langSelect').value = i18next.language.split('-')[0];
         
-        // RE-RUN CALCULATION ON LANGUAGE CHANGE
-        // This ensures the result box updates its text immediately
         if (currentResultText !== "") {
-            calculateDeployment();
+            calculateDeployment(false); // Refresh text without re-saving
         }
     }
 
@@ -147,8 +146,34 @@
         document.getElementById('themeIcon').innerText = "☀️";
     }
 
-    // Wrap your logic in a function we can call anytime
-    function calculateDeployment() {
+    // --- SAVE AND LOAD LOGIC ---
+    function saveTroopData() {
+        const data = {
+            queues: document.getElementById('queues').value,
+            capacity: document.getElementById('capacity').value,
+            infantry: document.getElementById('infantry').value,
+            lancer: document.getElementById('lancer').value,
+            marksman: document.getElementById('marksman').value
+        };
+        localStorage.setItem('wos_troop_data', JSON.stringify(data));
+    }
+
+    function loadSavedTroops() {
+        const saved = localStorage.getItem('wos_troop_data');
+        if (saved) {
+            const data = JSON.parse(saved);
+            document.getElementById('queues').value = data.queues;
+            document.getElementById('capacity').value = data.capacity;
+            document.getElementById('infantry').value = data.infantry;
+            document.getElementById('lancer').value = data.lancer;
+            document.getElementById('marksman').value = data.marksman;
+            
+            // Automatically run calculation if data exists
+            if(data.queues && data.capacity) calculateDeployment(false);
+        }
+    }
+
+    function calculateDeployment(shouldSave = true) {
         const messageArea = document.getElementById('messageArea');
         const copyArea = document.getElementById('copyArea');
         messageArea.innerHTML = '';
@@ -159,12 +184,14 @@
         const lancer = +document.getElementById('lancer').value;
         const marksman = +document.getElementById('marksman').value;
 
-        if (!queues || !capacity) return; // Don't calculate if empty
+        if (!queues || !capacity) return;
 
         if (isNaN(queues) || isNaN(capacity) || isNaN(infantry) || isNaN(lancer) || isNaN(marksman) || queues <= 0 || capacity <= 0) {
             messageArea.innerHTML = `<div class="alert alert-warning">${i18next.t('error_invalid')}</div>`;
             return;
         }
+
+        if (shouldSave) saveTroopData();
 
         const max_capacity = queues * capacity;
         const total_troops = infantry + lancer + marksman;
@@ -216,7 +243,7 @@
         }
     }
 
-    document.getElementById('calculateBtn').addEventListener('click', calculateDeployment);
+    document.getElementById('calculateBtn').addEventListener('click', () => calculateDeployment(true));
 
     function copyToClipboard() {
         navigator.clipboard.writeText(currentResultText).then(() => {
