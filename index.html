@@ -3,169 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WOS CJ Troop Deployment Calculator - by Pims</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-        .container {
-            padding-top: 50px;
-        }
+    <title data-i18n="app_title"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <script src="https://unpkg.com/i18next@23.10.0/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-http-backend@2.5.0/i18nextHttpBackend.min.js"></script>
+    <script src="https://unpkg.com/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
 
-        .form-label-compact {
-            font-size: 0.85rem; 
-            margin-bottom: 0.2rem;
-            display: block;
-        }
+    <style>
+        :root { --bg-color: #f8f9fa; --text-color: #212529; }
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; background-color: var(--bg-color) !important; }
+        .dark-mode .card { background-color: #1e1e1e; color: #e0e0e0; border: 1px solid #333; }
+        .dark-mode .card-header { background-color: #087990 !important; color: white !important; }
+        .dark-mode .form-control { background-color: #2b2b2b; border-color: #444; color: white; }
+        .dark-mode .form-control:focus { background-color: #333; color: white; border-color: #0dcaf0; }
+        .dark-mode hr { border-top: 1px solid #444; }
+        .dark-mode .alert-info { background-color: #032830; border-color: #087990; color: #6edff6; }
+        .dark-mode .alert-primary { background-color: #051b2b; border-color: #084298; color: #6ea8fe; }
+        body { background-color: var(--bg-color); color: var(--text-color); transition: all 0.3s ease; }
+        .container { padding-top: 50px; }
+        .form-label-compact { font-size: 0.85rem; margin-bottom: 0.2rem; display: block; }
+        .lang-select { width: auto; display: inline-block; padding: 2px 5px; font-size: 0.8rem; }
+        .hidden { display: none; }
+        .bold-text { font-weight: bold; }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; margin-right: 15px; }
     </style>
 </head>
 <body>
 <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-7">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-info text-dark">
-                        <h5 class="mb-0">Troop Deployment Capacity Check</h5>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg">
+                <div class="card-header bg-info text-dark d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0" data-i18n="card_header">...</h5>
+                    <div class="d-flex align-items-center">
+                        <span class="theme-toggle" onclick="toggleDarkMode()" id="themeIcon">🌙</span>
+                        <select class="form-select lang-select" id="langSelect" onchange="changeLanguage(this.value)">
+                            <option value="en">EN</option>
+                            <option value="fr">FR</option>
+                            <option value="it">IT</option>
+                            <option value="es">ES</option>
+                            <option value="pl">PL</option>
+                            <option value="tr">TR</option>
+                            <option value="ja">JA</option>
+                            <option value="zh">ZH</option>
+                        </select>
                     </div>
-                    <div class="card-body">
-                        <form id="troopForm">
-                            <div class="row">
-                                <div class="col-6 mb-3">
-                                    <label for="queues" class="form-label">Number of March Queues</label>
-                                    <input type="number" class="form-control" id="queues" required min="1">
-                                </div>
-                                <div class="col-6 mb-3">
-                                    <label for="capacity" class="form-label">Capacity per Queue</label>
-                                    <input type="number" class="form-control" id="capacity" required min="10000">
-                                </div>
+                </div>
+                <div class="card-body">
+                    <form id="troopForm">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="queues" class="form-label" data-i18n="label_queues"></label>
+                                <input type="number" class="form-control" id="queues" required min="1">
                             </div>
-
-                            <hr>
-                            
-                            <div class="row mb-3">
-                                <div class="col-4">
-                                    <label for="infantry" class="form-label-compact">Infantry Count</label>
-                                    <input type="number" class="form-control" id="infantry" required min="0">
-                                </div>
-                                <div class="col-4">
-                                    <label for="lancer" class="form-label-compact">Lancer Count</label>
-                                    <input type="number" class="form-control" id="lancer" required min="0">
-                                </div>
-                                <div class="col-4">
-                                    <label for="marksman" class="form-label-compact">Marksman Count</label>
-                                    <input type="number" class="form-control" id="marksman" required min="0">
-                                </div>
+                            <div class="col-6 mb-3">
+                                <label for="capacity" class="form-label" data-i18n="label_capacity"></label>
+                                <input type="number" class="form-control" id="capacity" required min="10000">
                             </div>
-                            <div class="row justify-content-center mt-3">
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-warning w-100" id="calculateBtn">
-                                        Check Deployment
-                                    </button>
-                                </div>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label for="infantry" class="form-label-compact" data-i18n="label_infantry"></label>
+                                <input type="number" class="form-control" id="infantry" required min="0">
                             </div>
-                        </form>
-
-                        <div class="mt-4" id="messageArea">
+                            <div class="col-4">
+                                <label for="lancer" class="form-label-compact" data-i18n="label_lancer"></label>
+                                <input type="number" class="form-control" id="lancer" required min="0">
                             </div>
+                            <div class="col-4">
+                                <label for="marksman" class="form-label-compact" data-i18n="label_marksman"></label>
+                                <input type="number" class="form-control" id="marksman" required min="0">
+                            </div>
+                        </div>
+                        <div class="row justify-content-center mt-3">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-warning w-100" id="calculateBtn" data-i18n="btn_check">
+                                    ...
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="mt-4" id="messageArea"></div>
+                    <div id="copyArea" class="text-center mt-3 hidden">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="copyToClipboard()" id="copyBtn" data-i18n="btn_copy">
+                            Copy Results
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    let currentResultText = "";
 
-   <script>
-        document.getElementById('calculateBtn').addEventListener('click', function() {
-            const messageArea = document.getElementById('messageArea');
-            // Clear previous messages and results
-            messageArea.innerHTML = '';
-
-            // 1. Get and parse the input values
-            const queues = +document.getElementById('queues').value;
-            const capacity = +document.getElementById('capacity').value;
-            const infantry = +document.getElementById('infantry').value;
-            const lancer = +document.getElementById('lancer').value;
-            const marksman = +document.getElementById('marksman').value;
-
-            // Basic Input Validation
-            if (isNaN(queues) || isNaN(capacity) || isNaN(infantry) || isNaN(lancer) || isNaN(marksman) || queues <= 0 || capacity <= 0) {
-                messageArea.innerHTML = '<div class="alert alert-warning">Please ensure all fields have valid positive numbers for Queues and Capacity.</div>';
-                return;
-            }
-
-            // Calculate the maximum capacity available
-            const max_capacity = queues * capacity;
-            const total_troops = infantry + lancer + marksman;
-            let infantry_per_queue = 0;
-            let excess_infantry = 0;
-            let lancer_per_queue = 0;
-            let marksman_per_queue = 0;
-            let leftover_lancer_msg = '';
-            let leftover_marksman_msg = '';
-
-            if (total_troops > max_capacity) {
-                const infoMsg = `
-                    <div class="alert alert-info" role="alert">
-                        <strong>INFO:</strong> You cannot get all your troops out.
-                        We are prioritizing **Infantry**, then Lancer, then Marksman.
-                    </div>
-                `;
-                messageArea.innerHTML += infoMsg;
-            }
-
-            if (infantry >= max_capacity) {
-                excess_infantry = infantry - max_capacity; 
-                const errorMsg = `
-                    <div class="alert alert-danger" role="alert">
-                        <strong>ERROR:</strong> You cannot get all your Infantry out, you have ${excess_infantry} too much infantry. 
-                        <br>Consider using a capacity bonus (pets or boost) or injuring some.
-                        <br>Your only solution is to send full marches of infantry
-                    </div>
-                `;
-                messageArea.innerHTML += errorMsg;
-             
-                // If infantry fails, we won't send any other troops anyway
-                
-            } else {
-                infantry_per_queue = Math.floor(infantry / queues);
-                const lancer_capacity = max_capacity - infantry;
-                
-                if (lancer >= lancer_capacity) { // Cannot fit all Lancers
-                    const leftover_lancer = lancer - lancer_capacity;
-                    
-                    lancer_per_queue = Math.floor(lancer_capacity / queues); 
-                    
-                    leftover_lancer_msg = `(${leftover_lancer.toLocaleString()} lancers will stay home)`;
-                    marksman_per_queue = 0;
-                    leftover_marksman_msg = '(All marksmen will stay home)';
-                
-                } else { // All Lancers fit
-                    lancer_per_queue = Math.floor(lancer / queues);
-                    
-                    const marksman_capacity = max_capacity - infantry - lancer;
-                    
-                    if (marksman > marksman_capacity) { // Cannot fit all Marksmen
-                        const leftover_marksman = marksman - marksman_capacity;
-                        
-                        marksman_per_queue = Math.floor(marksman_capacity / queues);
-                        leftover_marksman_msg = `(${leftover_marksman.toLocaleString()} marksmen will stay home)`;
-                    
-                    } else {
-                        // All Marksmen fit
-                        marksman_per_queue = Math.floor(marksman / queues);
-                    }
-                }
-                
-                const resultMsg = `
-                    <div class="alert alert-primary mt-3">
-                        <u>Calculated Result (per queue):</u>
-                        <br/>Infantry: <bold> ${infantry_per_queue.toLocaleString()} </bold>
-                        <br/>Lancer: <bold> ${lancer_per_queue.toLocaleString()} </bold> ${leftover_lancer_msg}
-                        <br/>Marksman: <bold> ${marksman_per_queue.toLocaleString()} </bold> ${leftover_marksman_msg}
-                    </div>
-                `;
-                messageArea.innerHTML += resultMsg;
-            }
+    i18next
+        .use(i18nextHttpBackend)
+        .use(i18nextBrowserLanguageDetector)
+        .init({
+            fallbackLng: 'en',
+            backend: { loadPath: './locales/{{lng}}.json' }
+        }, function(err, t) {
+            updateContent();
         });
-    </script>
+
+    function updateContent() {
+        // Update all data-i18n elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            el.innerHTML = i18next.t(key);
+        });
+        
+        // Force update the tab title
+        document.title = i18next.t('app_title');
+        
+        // Match dropdown to current language
+        document.getElementById('langSelect').value = i18next.language.split('-')[0];
+    }
+
+    function changeLanguage(lng) {
+        i18next.changeLanguage(lng, updateContent);
+    }
+
+    function toggleDarkMode() {
+        const body = document.body;
+        const icon = document.getElementById('themeIcon');
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            icon.innerText = "☀️";
+            localStorage.setItem('theme', 'dark');
+        } else {
+            icon.innerText = "🌙";
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeIcon').innerText = "☀️";
+    }
+
+    document.getElementById('calculateBtn').addEventListener('click', function() {
+        const messageArea = document.getElementById('messageArea');
+        const copyArea = document.getElementById('copyArea');
+        messageArea.innerHTML = '';
+        copyArea.classList.add('hidden');
+
+        const queues = +document.getElementById('queues').value;
+        const capacity = +document.getElementById('capacity').value;
+        const infantry = +document.getElementById('infantry').value;
+        const lancer = +document.getElementById('lancer').value;
+        const marksman = +document.getElementById('marksman').value;
+
+        if (isNaN(queues) || isNaN(capacity) || isNaN(infantry) || isNaN(lancer) || isNaN(marksman) || queues <= 0 || capacity <= 0) {
+            messageArea.innerHTML = `<div class="alert alert-warning">${i18next.t('error_invalid')}</div>`;
+            return;
+        }
+
+        const max_capacity = queues * capacity;
+        const total_troops = infantry + lancer + marksman;
+        let inf_q = 0, lan_q = 0, mar_q = 0;
+        let left_lan = '', left_mar = '';
+
+        if (total_troops > max_capacity) {
+            messageArea.innerHTML += `<div class="alert alert-info"><strong>${i18next.t('info_title')}:</strong> ${i18next.t('info_text')}</div>`;
+        }
+
+        if (infantry >= max_capacity) {
+            const excess = (infantry - max_capacity).toLocaleString();
+            messageArea.innerHTML += `<div class="alert alert-danger"><strong>${i18next.t('error_title')}:</strong> ${i18next.t('error_infantry_too_much', { count: excess })}</div>`;
+        } else {
+            inf_q = Math.floor(infantry / queues);
+            const lan_cap = max_capacity - infantry;
+            if (lancer >= lan_cap) {
+                const leftover = (lancer - lan_cap).toLocaleString();
+                lan_q = Math.floor(lan_cap / queues);
+                left_lan = `(${i18next.t('stay_home_lancer', { count: leftover })})`;
+                mar_q = 0;
+                left_mar = `(${i18next.t('stay_home_all_marksman')})`;
+            } else {
+                lan_q = Math.floor(lancer / queues);
+                const mar_cap = max_capacity - infantry - lancer;
+                if (marksman > mar_cap) {
+                    const leftover = (marksman - mar_cap).toLocaleString();
+                    mar_q = Math.floor(mar_cap / queues);
+                    left_mar = `(${i18next.t('stay_home_marksman', { count: leftover })})`;
+                } else {
+                    mar_q = Math.floor(marksman / queues);
+                }
+            }
+            
+            messageArea.innerHTML += `
+                <div class="alert alert-primary mt-3">
+                    <u>${i18next.t('result_title')}:</u><br/>
+                    ${i18next.t('label_infantry')}: <span class="bold-text">${inf_q.toLocaleString()}</span><br/>
+                    ${i18next.t('label_lancer')}: <span class="bold-text">${lan_q.toLocaleString()}</span> ${left_lan}<br/>
+                    ${i18next.t('label_marksman')}: <span class="bold-text">${mar_q.toLocaleString()}</span> ${left_mar}
+                </div>`;
+            
+            currentResultText = `${i18next.t('result_title')}:\n` +
+                                `${i18next.t('label_infantry')}: ${inf_q.toLocaleString()}\n` +
+                                `${i18next.t('label_lancer')}: ${lan_q.toLocaleString()}\n` +
+                                `${i18next.t('label_marksman')}: ${mar_q.toLocaleString()}`;
+            
+            copyArea.classList.remove('hidden');
+        }
+    });
+
+    function copyToClipboard() {
+        navigator.clipboard.writeText(currentResultText).then(() => {
+            const btn = document.getElementById('copyBtn');
+            const originalText = i18next.t('btn_copy');
+            btn.innerText = "Copied!";
+            setTimeout(() => btn.innerText = originalText, 2000);
+        });
+    }
+</script>
 </body>
 </html>
